@@ -2,6 +2,7 @@ package com.example.TheatreRoyal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -101,7 +102,8 @@ public class DBConnector {
 	/*	Method printSqlQueryOutput() displays the column heads. No
 	hardcoded strings*/
 
-    public void printSqlQueryOutput(ResultSet rs) {
+    public ArrayList<String> getQueryResult(ResultSet rs) {
+        ArrayList<String> temp = new ArrayList<String>();
         try {
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnsNumber = rsmd.getColumnCount();
@@ -109,14 +111,14 @@ public class DBConnector {
                 for (int i = 1; i <= columnsNumber; i++) {
                     if (i > 1) System.out.print(",  ");
                     String columnValue = rs.getString(i);
-                    System.out.print(rsmd.getColumnName(i) + ": " + columnValue);
+                    temp.add(columnValue);
                 }
-                System.out.println("");
             }
         } catch (SQLException e) {
 
             e.printStackTrace();
         }
+        return temp;
     }
 
     public void close() {

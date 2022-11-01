@@ -7,8 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Objects;
+
 @Controller // This means that this class is a Controller
-@RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
+@RequestMapping(path="/authentication") // This means URL's start with /demo (after Application path)
 public class MainController {
     DBConnector db;
     MainController(){
@@ -29,9 +33,22 @@ public class MainController {
         return "Saved";
     }
 
-    @GetMapping(path="/all")
-    public @ResponseBody String getAllUsers() {
+    @PostMapping(path="/login")
+    public @ResponseBody String Login(@RequestParam String email, @RequestParam String password) {
         // This returns a JSON or XML with the users
-        return "Hello";
+        ResultSet rs = db.runQuery("Select password from Users where email = '" + email + "'");
+
+        ArrayList<String> user_data = db.getQueryResult(rs);
+
+        try {
+            String user_password = user_data.get(0);
+            if (Objects.equals(user_password, password)) {
+                return "Logged in";
+            }
+            return "Invalid password";
+        } catch(IndexOutOfBoundsException e){
+            return "Invalid email";
+        }
+
     }
 }
